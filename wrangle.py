@@ -99,7 +99,6 @@ and properties_2017.longitude is not null;
         '''
     df = pd.read_sql(query, get_connection('zillow'))  
     
-    df.set_index('parcelid', inplace=True)
     
     #replace white space with nulls
     df = df.replace(r'^\s*$', np.NaN, regex=True)
