@@ -99,7 +99,7 @@ and properties_2017.longitude is not null;
         '''
     df = pd.read_sql(query, get_connection('zillow'))  
     
-    df.set_index('parcelid')
+    df.set_index('parcelid', inplace=True)
     
     #replace white space with nulls
     df = df.replace(r'^\s*$', np.NaN, regex=True)
@@ -217,7 +217,10 @@ def summerize_df(df):
     
 
 
-
+#remove nulls and columns based on %
+##############################################################
+##############################################################
+##############################################################
 def nulls_by_col(df):
     num_missing = df.isnull().sum()
     print(type(num_missing))
@@ -247,22 +250,24 @@ def get_nulls(df):
 def drop_null_columns(df , null_min , col_missing = 'percent_rows_missing'):
     cols = get_nulls(df)[0]
     for i in range(len(cols)):
-        if cols[col_missing][i] > null_min:
+        if cols[col_missing][i] >= null_min:
             df = df.drop(columns = cols.index[i])
         
     return df
 
-def drop_null_rows(df , null_min, row_missing = 'percent_cols_missing'):
-    for 
-        
-       
+def drop_null_rows(df , percentage):
+    min_count = int(((100-percentage)/100)*df.shape[1] + 1)
+    df = df.dropna(axis=0, thresh = min_count)
         
     return df
 
 def drop_nulls(df, axis, percentage):
     if axis == 0:
-        df = drop_null_rows(df, percentage)
+        df = drop_null_rows(df, percentage)   
     else:
         df = drop_null_columns(df, percentage)
     return df
+##############################################################
+##############################################################
+##############################################################
 
